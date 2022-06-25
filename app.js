@@ -2,6 +2,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const ejsMate = require("ejs-mate");
 const Campground = require("./models/campground");
 const methodOverride = require("method-override");
 
@@ -21,6 +22,7 @@ db.once("open", () => {
 });
 
 //EJS Config
+app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 // Path configuration to find appropriate view file
 app.set("views", path.join(__dirname, "views"));
@@ -80,6 +82,11 @@ app.delete("/campgrounds/:id", async (req, res) => {
   const { id } = req.params;
   await Campground.findByIdAndDelete(id);
   res.redirect("/campgrounds");
+});
+
+// Add a 404 handler
+app.use((req, res) => {
+  res.status(404).send("Not Found");
 });
 
 // Listening on port 3000
