@@ -40,8 +40,8 @@ app.get("/", (req, res) => {
 
 // Shows all listed campgrounds
 app.get("/campgrounds", async (req, res) => {
-  const camps = await Campground.find({});
-  res.render("campgrounds/index", { camps });
+  const campgrounds = await Campground.find({});
+  res.render("campgrounds/index", { campgrounds });
 });
 
 // Shows form to create a new campground
