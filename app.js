@@ -5,6 +5,8 @@ const path = require("path");
 const ejsMate = require("ejs-mate");
 const Campground = require("./models/campground");
 const methodOverride = require("method-override");
+const catchAsync = require("./utils/catchAsync");
+const ExpressError = require("./utils/ExpressError");
 
 // Connecting express
 const app = express();
@@ -39,10 +41,13 @@ app.get("/", (req, res) => {
 });
 
 // Shows all listed campgrounds
-app.get("/campgrounds", async (req, res) => {
-  const campgrounds = await Campground.find({});
-  res.render("campgrounds/index", { campgrounds });
-});
+app.get(
+  "/campgrounds",
+  catchAsync(async (req, res) => {
+    const campgrounds = await Campground.find({});
+    res.render("campgrounds/index", { campgrounds });
+  })
+);
 
 // Shows form to create a new campground
 app.get("/campgrounds/new", (req, res) => {
@@ -50,43 +55,66 @@ app.get("/campgrounds/new", (req, res) => {
 });
 
 // Posts new campground created with form used in above route
-app.post("/campgrounds", async (req, res) => {
-  const campground = new Campground(req.body.campground);
-  await campground.save();
-  res.redirect(`/campgrounds/${campground._id}`);
-});
+app.post(
+  "/campgrounds",
+  catchAsync(async (req, res) => {
+    if (!req.body.campground)
+      throw new ExpressError("Invalid Campground Data", 400);
+    const campground = new Campground(req.body.campground);
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+  })
+);
 
 // Show one campground, specified by unique identifier
-app.get("/campgrounds/:id", async (req, res) => {
-  const campground = await Campground.findById(req.params.id);
-  res.render("campgrounds/show", { campground });
-});
+app.get(
+  "/campgrounds/:id",
+  catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    res.render("campgrounds/show", { campground });
+  })
+);
 
 // Shows form to edit a campground, specified by unique identifier
-app.get("/campgrounds/:id/edit", async (req, res) => {
-  const campground = await Campground.findById(req.params.id);
-  res.render("campgrounds/edit", { campground });
-});
+app.get(
+  "/campgrounds/:id/edit",
+  catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    res.render("campgrounds/edit", { campground });
+  })
+);
 
 // Updates a campground, specified by unique identifier
-app.put("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  const campground = await Campground.findByIdAndUpdate(id, {
-    ...req.body.campground,
-  });
-  res.redirect(`/campgrounds/${campground._id}`);
-});
+app.put(
+  "/campgrounds/:id",
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const campground = await Campground.findByIdAndUpdate(id, {
+      ...req.body.campground,
+    });
+    res.redirect(`/campgrounds/${campground._id}`);
+  })
+);
 
 // Removes a campground from the list/database, specified by a unique identifier
-app.delete("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  await Campground.findByIdAndDelete(id);
-  res.redirect("/campgrounds");
+app.delete(
+  "/campgrounds/:id",
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect("/campgrounds");
+  })
+);
+
+// Add an error handler
+app.all("*", (req, res, next) => {
+  next(new ExpressError("Page Not Found", 404));
 });
 
-// Add a 404 handler
-app.use((req, res) => {
-  res.status(404).send("Not Found");
+app.use((err, req, res, next) => {
+  const { statusCode = 500 } = err;
+  if (!err.message) err.message = "Something went wrong";
+  res.status(statusCode).render("error", { err });
 });
 
 // Listening on port 3000
