@@ -54,6 +54,7 @@ app.use(methodOverride("_method")); // Allows for PUT/PATCH and DELETE requests 
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
   next();
 });
 
