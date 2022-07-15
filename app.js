@@ -7,6 +7,8 @@ const methodOverride = require("method-override");
 const ExpressError = require("./utils/ExpressError");
 const campgrounds = require("./routes/campgrounds");
 const reviews = require("./routes/reviews");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 // Connecting express
 const app = express();
@@ -30,11 +32,30 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
+const sessionConfig = {
+  secret: "nicesecretbud",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+};
+
+app.use(session(sessionConfig));
+app.use(flash());
+
 // Parses incoming requests with urlencoded payloads. extended=true allows for things like arrays + objects to be encoded into the URL-encoded format
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method")); // Allows for PUT/PATCH and DELETE requests to take place
 
 ///////// ROUTING AND CRUD /////////
+
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  next();
+});
 
 app.use("/campgrounds", campgrounds);
 app.use("/campgrounds/:id/reviews", reviews);
