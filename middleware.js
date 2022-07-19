@@ -1,10 +1,13 @@
 const ExpressError = require("./utils/ExpressError");
 const Campground = require("./models/campground");
+const Review = require("./models/review");
 const { reviewSchema, campgroundSchema } = require("./schemas");
 
 const isLoggedIn = (req, res, next) => {
+  const { id } = req.params;
   if (!req.isAuthenticated()) {
-    req.session.returnTo = req.originalUrl;
+    req.session.returnTo =
+      req.query._method === "DELETE" ? `/campgrounds/${id}` : req.originalUrl;
     req.flash("error", "You must be signed in");
     return res.redirect("/login");
   }
@@ -32,6 +35,16 @@ const isAuthor = async (req, res, next) => {
   next();
 };
 
+const isReviewAuthor = async (req, res, next) => {
+  const { id, reviewId } = req.params;
+  const review = await Review.findById(reviewId);
+  if (!review.author.equals(req.user._id)) {
+    req.flash("error", "You do not have the necessary permissions to do that.");
+    return res.redirect(`/campgrounds/${id}`);
+  }
+  next();
+};
+
 // Function to do server-side validation on reviews
 const validateReview = (req, res, next) => {
   const { error } = reviewSchema.validate(req.body);
@@ -43,4 +56,10 @@ const validateReview = (req, res, next) => {
   }
 };
 
-module.exports = { isLoggedIn, validateCampground, isAuthor, validateReview };
+module.exports = {
+  isLoggedIn,
+  validateCampground,
+  isAuthor,
+  isReviewAuthor,
+  validateReview,
+};
