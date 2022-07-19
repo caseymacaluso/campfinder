@@ -7,8 +7,12 @@ const methodOverride = require("method-override");
 const ExpressError = require("./utils/ExpressError");
 const campgrounds = require("./routes/campgrounds");
 const reviews = require("./routes/reviews");
+const users = require("./routes/users");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user");
 
 // Connecting express
 const app = express();
@@ -46,6 +50,13 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 // Parses incoming requests with urlencoded payloads. extended=true allows for things like arrays + objects to be encoded into the URL-encoded format
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method")); // Allows for PUT/PATCH and DELETE requests to take place
@@ -58,6 +69,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/", users);
 app.use("/campgrounds", campgrounds);
 app.use("/campgrounds/:id/reviews", reviews);
 
