@@ -16,17 +16,12 @@ const authOptions = {
   keepSessionInfo: true,
 };
 
-router.get("/register", userRegisterForm);
+router.route("/register").get(userRegisterForm).post(catchAsync(registerUser));
 
-router.post("/register", catchAsync(registerUser));
-
-router.get("/login", userLoginForm);
-
-router.post(
-  "/login",
-  passport.authenticate("local", authOptions),
-  authenticateUser
-);
+router
+  .route("/login")
+  .get(userLoginForm)
+  .post(passport.authenticate("local", authOptions), authenticateUser);
 
 router.get("/logout", userLogout);
 
