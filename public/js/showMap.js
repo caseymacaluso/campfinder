@@ -17,3 +17,8 @@ new mapboxgl.Marker()
     )
   )
   .addTo(map);
+
+const nav = new mapboxgl.NavigationControl({
+  visualizePitch: true,
+});
+map.addControl(nav, "top-left");

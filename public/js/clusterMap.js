@@ -121,8 +121,6 @@ map.on("load", () => {
   });
 
   const nav = new mapboxgl.NavigationControl({
-    showCompass: true,
-    showZoom: true,
     visualizePitch: true,
   });
   map.addControl(nav, "top-left");
