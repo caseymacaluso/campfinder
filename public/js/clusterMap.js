@@ -120,6 +120,13 @@ map.on("load", () => {
       .addTo(map);
   });
 
+  const nav = new mapboxgl.NavigationControl({
+    showCompass: true,
+    showZoom: true,
+    visualizePitch: true,
+  });
+  map.addControl(nav, "top-left");
+
   map.on("mouseenter", "clusters", () => {
     map.getCanvas().style.cursor = "pointer";
   });
