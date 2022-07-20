@@ -59,6 +59,12 @@ const updateCampground = async (req, res) => {
   const campground = await Campground.findByIdAndUpdate(id, {
     ...req.body.campground,
   });
+  const images = req.files.map((f) => ({
+    url: f.path,
+    filename: f.filename,
+  }));
+  campground.images.push(...images);
+  await campground.save();
   req.flash("success", "Updated campground!");
   res.redirect(`/campgrounds/${campground._id}`);
 };
