@@ -1,33 +1,58 @@
 <% layout('layout/boilerplate') %>
-<h1>Register</h1>
+<div class="container justify-content-center align-items-center mt-5">
+  <div class="row">
+    <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+      <div class="card shadow">
+        <div class="card-body">
+          <img
+            class="img-fluid"
+            src="https://res.cloudinary.com/diyqysgbc/image/upload/v1658338148/Campfinder/ebb0pppvxnjf5ngeg5it.jpg"
+            alt="" />
+          <h5 class="card-title mt-2">Register</h5>
+          <form
+            class="validated-form"
+            novalidate
+            action="/register"
+            method="POST">
+            <div class="mb-3">
+              <label class="form-label" for="email">Email</label>
+              <input
+                class="form-control"
+                type="email"
+                id="email"
+                name="email"
+                autofocus
+                required />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
 
-<form class="validated-form" novalidate action="/register" method="POST">
-  <div class="mb-3">
-    <label class="form-label" for="email">Email</label>
-    <input class="form-control" type="email" id="email" name="email" required />
-    <div class="valid-feedback">Looks good!</div>
-  </div>
+            <div class="mb-3">
+              <label class="form-label" for="username">Username</label>
+              <input
+                class="form-control"
+                type="text"
+                id="username"
+                name="username"
+                required />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
 
-  <div class="mb-3">
-    <label class="form-label" for="username">Username</label>
-    <input
-      class="form-control"
-      type="text"
-      id="username"
-      name="username"
-      required />
-    <div class="valid-feedback">Looks good!</div>
+            <div class="mb-3">
+              <label class="form-label" for="password">Password</label>
+              <input
+                class="form-control"
+                type="password"
+                id="password"
+                name="password"
+                required />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="d-grid">
+              <button class="btn btn-success">Register</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="mb-3">
-    <label class="form-label" for="password">Password</label>
-    <input
-      class="form-control"
-      type="password"
-      id="password"
-      name="password"
-      required />
-    <div class="valid-feedback">Looks good!</div>
-  </div>
-  <button class="btn btn-success">Register</button>
-</form>
+</div>
