@@ -6,10 +6,10 @@
 <div class="card" mb-3>
   <div class="row">
     <div class="col-md-4">
-      <img
-        class="img-fluid"
-        src="<%= campground.images[0].url %>"
-        alt="Image of Campground" />
+      <img class="img-fluid" src="<%= campground.images.length ?
+      campground.images[0].url :
+      "https://res.cloudinary.com/diyqysgbc/image/upload/v1658277462/Campfinder/ivgxwparbrgmoucro5cn.jpg"%>"
+      alt="Image of Campground" />
     </div>
     <div class="col-md-8">
       <div class="card-body">
