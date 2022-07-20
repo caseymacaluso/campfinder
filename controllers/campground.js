@@ -1,4 +1,5 @@
 const Campground = require("../models/campground");
+const { cloudinary } = require("../cloudinary");
 
 // Index page that shows all listed campgrounds
 const index = async (req, res) => {
@@ -65,6 +66,15 @@ const updateCampground = async (req, res) => {
   }));
   campground.images.push(...images);
   await campground.save();
+  if (req.body.deleteImages) {
+    for (let filename of req.body.deleteImages) {
+      await cloudinary.uploader.destroy(filename);
+    }
+    await campground.updateOne({
+      $pull: { images: { filename: { $in: req.body.deleteImages } } },
+    });
+    console.log(campground);
+  }
   req.flash("success", "Updated campground!");
   res.redirect(`/campgrounds/${campground._id}`);
 };
