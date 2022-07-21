@@ -19,12 +19,14 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
+const MongoStore = require("connect-mongo");
+const dbUrl = "mongodb://localhost:27017/campfinder";
 
 // Connecting express
 const app = express();
 
 // Connecting to MongoDB
-mongoose.connect("mongodb://localhost:27017/campfinder", {
+mongoose.connect(process.env.DB_URL || dbUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -43,9 +45,25 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(mongoSanitize());
 
+const secret =
+  process.env.SECRET || "thisreallyshouldbeabettersecretimeancomeonmanreally";
+
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+    secret,
+  },
+});
+
+store.on("error", function (e) {
+  console.log("Session store error", e);
+});
+
 const sessionConfig = {
+  store,
   name: "session",
-  secret: "nicesecretbud",
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
