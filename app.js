@@ -17,6 +17,7 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
+const mongoSanitize = require("express-mongo-sanitize");
 
 // Connecting express
 const app = express();
@@ -39,8 +40,10 @@ app.set("view engine", "ejs");
 // Path configuration to find appropriate view file
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(mongoSanitize());
 
 const sessionConfig = {
+  name: "session",
   secret: "nicesecretbud",
   resave: false,
   saveUninitialized: true,
