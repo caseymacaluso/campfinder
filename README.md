@@ -21,3 +21,7 @@ Highlight of tools used for this project:
 - joi for schema definition
 
 --------------------------------------------------------------------------------
+
+Image of finished product in local environment (Seeding production data is in progress):
+
+![image](https://user-images.githubusercontent.com/55809083/180131015-311b9d61-3557-494e-99cb-993812ebb502.png)
